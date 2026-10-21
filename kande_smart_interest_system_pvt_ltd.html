@@ -1,0 +1,1267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Kande Smart">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#312e81">
+    <title>Kande Smart Interest System Pvt. Ltd.</title>
+
+    <!-- Embedded SVG App Icon for Mobile Home Screen -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23312e81'/%3E%3Cstop offset='100%25' stop-color='%234f46e5'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='120' height='120' rx='28' fill='url(%23g)'/%3E%3Ctext x='60' y='78' font-family='Arial,sans-serif' font-size='56' font-weight='900' fill='%23ffffff' text-anchor='middle'%3EK%E2%82%B9%3C/text%3E%3Ccircle cx='96' cy='24' r='10' fill='%2310b981'/%3E%3C/svg%3E">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Crect width='120' height='120' rx='28' fill='%23312e81'/%3E%3Ctext x='60' y='78' font-family='Arial,sans-serif' font-size='56' font-weight='900' fill='%23ffffff' text-anchor='middle'%3EK%E2%82%B9%3C/text%3E%3C/svg%3E">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- html2pdf.js for Client-Side PDF Generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.12) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(139, 92, 246, 0.12) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(16, 185, 129, 0.08) 0px, transparent 50%);
+            background-attachment: fixed;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(226, 232, 240, 0.85);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            height: 6px;
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 8px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 8px;
+        }
+        #pdfRenderRoot {
+            position: fixed;
+            left: -9999px;
+            top: 0;
+            width: 790px;
+            background: #ffffff;
+            color: #0f172a;
+            z-index: -1;
+        }
+        .pdf-page-break {
+            page-break-inside: avoid;
+            break-inside: avoid;
+        }
+    </style>
+</head>
+<body class="min-h-screen pb-16 text-slate-800">
+
+    <header class="bg-gradient-to-r from-slate-950 via-indigo-950 to-slate-900 text-white shadow-xl sticky top-0 z-40 border-b border-indigo-500/20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex flex-wrap items-center justify-between gap-3">
+            <div class="flex items-center gap-3.5">
+                <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-indigo-500 via-purple-600 to-emerald-500 p-0.5 shadow-lg shadow-indigo-500/30 flex items-center justify-center">
+                    <svg class="w-full h-full rounded-[14px] bg-slate-950" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="100" height="100" rx="20" fill="url(#kandeLogoGrad)"/>
+                        <path d="M24 26V74M24 50L50 26M34 41L52 74" stroke="white" stroke-width="8.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <text x="56" y="72" fill="#34d399" font-family="Inter, sans-serif" font-weight="900" font-size="38">₹</text>
+                        <circle cx="80" cy="22" r="7" fill="#34d399"/>
+                        <defs>
+                            <linearGradient id="kandeLogoGrad" x1="0" y1="0" x2="100" y2="100" gradientUnits="userSpaceOnUse">
+                                <stop stop-color="#1e1b4b"/>
+                                <stop offset="1" stop-color="#312e81"/>
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-base sm:text-lg font-black tracking-tight text-white leading-tight">
+                        Kande Smart Interest <span class="text-indigo-400 font-bold text-xs sm:text-sm">Pvt. Ltd.</span>
+                    </h1>
+                    <div class="flex items-center gap-2 mt-0.5">
+                        <span id="syncStatusBadge" class="inline-flex items-center gap-1.5 text-[11px] font-semibold bg-emerald-500/20 text-emerald-300 px-2.5 py-0.5 rounded-full border border-emerald-400/30">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Firebase Synced (smart-interest-e05b0)
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
+                <button id="tabDashboardBtn" onclick="switchTab('dashboard')" 
+                    class="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold transition bg-indigo-600 text-white shadow-md shadow-indigo-600/30">
+                    <span>📊</span> Dashboard
+                </button>
+                <button id="tabCalculatorBtn" onclick="switchTab('calculator')" 
+                    class="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold transition bg-slate-800/90 text-slate-300 hover:bg-slate-700">
+                    <span>🧮</span> Calculator & Add
+                </button>
+                <button onclick="openFirebaseConfigModal()" 
+                    class="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold transition bg-slate-800/90 text-indigo-300 hover:bg-slate-700 border border-indigo-500/30" title="Firebase Settings">
+                    <span>⚙️</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 mt-4">
+        <div id="errorBox" class="hidden mb-4 bg-rose-50 border border-rose-200 text-rose-700 px-4 py-3 rounded-xl text-xs sm:text-sm font-semibold flex items-center justify-between shadow-sm">
+            <span id="errorText"></span>
+            <button onclick="document.getElementById('errorBox').classList.add('hidden')" class="text-rose-500 hover:text-rose-800 font-bold ml-4">✕</button>
+        </div>
+        <div id="toastBox" class="hidden mb-4 bg-emerald-900 text-emerald-100 border border-emerald-700 px-4 py-3 rounded-xl text-xs sm:text-sm font-semibold flex items-center justify-between shadow-lg">
+            <span id="toastText"></span>
+            <button onclick="document.getElementById('toastBox').classList.add('hidden')" class="text-emerald-300 hover:text-white font-bold ml-4">✕</button>
+        </div>
+    </div>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 mt-4 space-y-8">
+        <!-- Dashboard Page -->
+        <section id="pageDashboard" class="space-y-6">
+            <div class="glass-card rounded-3xl p-5 sm:p-7 shadow-lg border border-slate-200/90">
+                <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
+                    <div>
+                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-50 border border-indigo-200 text-indigo-700 text-xs font-bold mb-2">
+                            <span>⚡</span> Firebase Cloud Ledger (smart-interest-e05b0)
+                        </div>
+                        <h2 class="text-xl sm:text-2xl font-black text-slate-900">Executive Portfolio Dashboard</h2>
+                        <p class="text-xs sm:text-sm text-slate-500 mt-0.5">Live summary of principal disbursed, interest collected, and pending monthly accruals.</p>
+                    </div>
+
+                    <div class="flex flex-wrap items-center gap-2.5">
+                        <button onclick="startNewLoanAndGoToCalc()" 
+                            class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white text-xs sm:text-sm font-bold shadow-md shadow-indigo-500/20 transition">
+                            <span>➕</span> Add New Borrower
+                        </button>
+                        <button onclick="downloadAllLoansPDF()" 
+                            class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs sm:text-sm font-bold shadow-md transition">
+                            <span>📄</span> Export Full Month-Wise PDF
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 1-Letter Search Bar -->
+                <div class="mt-6 pt-5 border-t border-slate-200/80 relative">
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">
+                        🔍 Quick Borrower Search (Type 1st letter of name to view full data)
+                    </label>
+                    <div class="relative">
+                        <input type="text" id="dashboardSearchInput" 
+                            oninput="handleBorrowerSearch(this.value, 'dashboardSuggestBox')"
+                            onfocus="handleBorrowerSearch(this.value, 'dashboardSuggestBox')"
+                            placeholder="Type first letter (e.g. R, A, S...) to find borrower & open full details..."
+                            autocomplete="off"
+                            class="w-full pl-10 pr-24 py-3 bg-slate-50 border border-slate-300 rounded-2xl text-sm font-semibold text-slate-800 focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none transition">
+                        <span class="absolute left-3.5 top-3.5 text-slate-400">🔎</span>
+                        <button onclick="clearDashboardSearch()" class="absolute right-3 top-2.5 text-xs font-bold text-slate-400 hover:text-slate-700 px-2 py-1 rounded-lg">
+                            Clear
+                        </button>
+                    </div>
+                    <div id="dashboardSuggestBox" class="hidden absolute left-0 right-0 mt-1.5 bg-white border border-slate-200 rounded-2xl shadow-2xl max-h-72 overflow-y-auto z-30 divide-y divide-slate-100"></div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+                <div class="glass-card rounded-2xl p-5 shadow-md border-l-4 border-l-indigo-600">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-bold uppercase tracking-wider text-slate-500">Total Paid to Borrowers</span>
+                        <span class="w-8 h-8 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold text-sm">₹</span>
+                    </div>
+                    <div id="dashTotalPrincipal" class="text-2xl sm:text-3xl font-black text-slate-900 mt-2">₹0.00</div>
+                    <p class="text-[11px] text-slate-400 font-medium mt-1">Active principal outlay</p>
+                </div>
+
+                <div class="glass-card rounded-2xl p-5 shadow-md border-l-4 border-l-purple-600">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-bold uppercase tracking-wider text-slate-500">Total Accrued Interest</span>
+                        <span class="w-8 h-8 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center font-bold text-sm">📈</span>
+                    </div>
+                    <div id="dashTotalGrossInterest" class="text-2xl sm:text-3xl font-black text-purple-700 mt-2">₹0.00</div>
+                    <p class="text-[11px] text-slate-400 font-medium mt-1">Gross interest across completed months</p>
+                </div>
+
+                <div class="glass-card rounded-2xl p-5 shadow-md border-l-4 border-l-emerald-500">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-bold uppercase tracking-wider text-slate-500">Interest Collected</span>
+                        <span class="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold text-sm">✓</span>
+                    </div>
+                    <div id="dashTotalInterestCollected" class="text-2xl sm:text-3xl font-black text-emerald-600 mt-2">₹0.00</div>
+                    <p class="text-[11px] text-slate-400 font-medium mt-1">Received interest payments</p>
+                </div>
+
+                <div class="glass-card rounded-2xl p-5 shadow-md border-l-4 border-l-amber-500">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-bold uppercase tracking-wider text-slate-500">Pending Interest Due</span>
+                        <span class="px-2 py-0.5 rounded-full text-[11px] font-extrabold bg-slate-900 text-white"><span id="dashTotalAccounts">0</span> Accounts</span>
+                    </div>
+                    <div id="dashTotalInterest" class="text-2xl sm:text-3xl font-black text-amber-600 mt-2">₹0.00</div>
+                    <p class="text-[11px] text-slate-400 font-medium mt-1">Remaining interest to collect</p>
+                </div>
+            </div>
+
+            <!-- Selected Borrower Full Detail Drawer -->
+            <div id="borrowerFullDetailCard" class="hidden glass-card rounded-3xl p-6 shadow-xl border-2 border-indigo-500/80 space-y-5">
+                <div class="flex flex-wrap items-start justify-between gap-4 border-b border-slate-200 pb-4">
+                    <div>
+                        <span class="text-[11px] font-extrabold uppercase tracking-wider text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-full">Borrower Full Statement & Month-Wise Ledger</span>
+                        <h3 id="detailBorrowerName" class="text-xl sm:text-2xl font-black text-slate-900 mt-1.5">-</h3>
+                        <p id="detailBorrowerDates" class="text-xs text-slate-500 font-medium mt-0.5">-</p>
+                    </div>
+                    <div class="flex flex-wrap items-center gap-2">
+                        <button id="detailEditBtn" class="px-3.5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold shadow-sm transition">
+                            ✏️ Edit in Calculator
+                        </button>
+                        <button id="detailPdfBtn" class="px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold shadow-sm transition">
+                            📄 Download Borrower PDF
+                        </button>
+                        <button onclick="document.getElementById('borrowerFullDetailCard').classList.add('hidden')" class="px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-bold">
+                            ✕ Close
+                        </button>
+                    </div>
+                </div>
+
+                <div id="detailSummaryGrid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3"></div>
+
+                <div>
+                    <h4 class="text-xs font-extrabold uppercase tracking-wider text-slate-600 mb-2.5">Month-by-Month Interest Increment Schedule</h4>
+                    <div id="detailScheduleContainer" class="overflow-x-auto custom-scrollbar border border-slate-200 rounded-2xl"></div>
+                </div>
+            </div>
+
+            <!-- Saved Borrowers Master Table -->
+            <div class="glass-card rounded-3xl p-5 sm:p-7 shadow-lg border border-slate-200/90">
+                <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+                    <div>
+                        <h3 class="text-base sm:text-lg font-extrabold text-slate-900">Saved Borrower Accounts Ledger</h3>
+                        <p class="text-xs text-slate-500">Click any borrower name to inspect their full month-by-month breakdown, clear interest, or export PDF.</p>
+                    </div>
+                </div>
+                <div id="savedLoansContainer" class="overflow-x-auto custom-scrollbar">
+                    <p class="text-sm text-slate-400 font-medium italic py-10 text-center">Loading Firebase Database...</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Calculator Page -->
+        <section id="pageCalculator" class="hidden space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                <!-- Left Column: Inputs & Direct Add -->
+                <div class="lg:col-span-5 glass-card rounded-3xl p-6 sm:p-7 shadow-lg border border-slate-200/90 space-y-4">
+                    <div class="flex items-center justify-between border-b border-slate-200 pb-3">
+                        <div>
+                            <span id="editingModeBadge" class="text-[11px] font-extrabold uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
+                                New Borrower Entry
+                            </span>
+                            <h2 class="text-lg sm:text-xl font-black text-slate-900 mt-1">Loan Interest Calculator</h2>
+                        </div>
+                        <button onclick="resetFormForNewEntry()" class="text-xs font-bold text-indigo-600 hover:text-indigo-800 bg-indigo-50 px-3 py-1.5 rounded-xl">
+                            🔄 Reset Empty
+                        </button>
+                    </div>
+
+                    <div class="relative">
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+                            Borrower Name / Reference
+                        </label>
+                        <input type="text" id="borrowerName" 
+                            placeholder="Type 1st letter to search or enter new name..."
+                            autocomplete="off"
+                            oninput="handleBorrowerSearch(this.value, 'calcSuggestBox')"
+                            onfocus="handleBorrowerSearch(this.value, 'calcSuggestBox')"
+                            class="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-sm font-semibold focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                        <div id="calcSuggestBox" class="hidden absolute left-0 right-0 mt-1 bg-white border border-slate-200 rounded-2xl shadow-2xl max-h-60 overflow-y-auto z-30 divide-y divide-slate-100"></div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <div class="sm:col-span-2">
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Principal Amount (₹)</label>
+                            <input type="number" id="principal" placeholder="e.g. 50000" oninput="calculateLoan(true)"
+                                class="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-xl text-sm font-bold text-slate-900 focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Rate / ₹100 / Mo</label>
+                            <input type="number" id="ratePer100" value="3" step="0.25" oninput="calculateLoan(true)"
+                                class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-sm font-bold text-indigo-700 focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">From Date (Disbursed)</label>
+                            <input type="date" id="fromDate" onchange="calculateLoan(true)"
+                                class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-sm font-semibold focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                        </div>
+                        <div>
+                            <div class="flex items-center justify-between mb-1">
+                                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider">To Date</label>
+                                <button type="button" onclick="simulateNextCompletedMonth()" class="text-[11px] font-bold text-indigo-600 hover:underline">
+                                    +1 Month Test
+                                </button>
+                            </div>
+                            <input type="date" id="toDate" onchange="calculateLoan(true)"
+                                class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-sm font-semibold focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 space-y-2.5">
+                        <div class="flex items-center justify-between">
+                            <label class="inline-flex items-center gap-2 text-xs font-bold text-slate-700 cursor-pointer">
+                                <input type="checkbox" id="autoSyncToday" checked onchange="toggleAutoSyncToday()" class="rounded text-indigo-600 focus:ring-indigo-500">
+                                Auto-update amount when borrower month completes
+                            </label>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2 pt-1">
+                            <label class="flex items-center gap-2 p-2 rounded-xl border border-slate-200 bg-white text-xs font-semibold cursor-pointer">
+                                <input type="radio" name="calcMode" value="simple" checked onchange="calculateLoan(true)" class="text-indigo-600">
+                                Simple Monthly
+                            </label>
+                            <label class="flex items-center gap-2 p-2 rounded-xl border border-slate-200 bg-white text-xs font-semibold cursor-pointer">
+                                <input type="radio" name="calcMode" value="compound" onchange="calculateLoan(true)" class="text-indigo-600">
+                                Auto-Compound
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="bg-emerald-50/70 p-3.5 rounded-2xl border border-emerald-200">
+                        <div class="flex items-center justify-between mb-1">
+                            <label class="block text-xs font-bold text-emerald-900 uppercase tracking-wider">Interest Paid Amount (₹)</label>
+                            <button type="button" onclick="clearAllPendingInterestInForm()" class="text-[11px] font-extrabold text-emerald-700 hover:underline">
+                                ✓ Mark Full Interest Paid
+                            </button>
+                        </div>
+                        <input type="number" id="interestPaidInput" value="0" min="0" placeholder="Enter interest paid..." oninput="calculateLoan(true)"
+                            class="w-full px-3.5 py-2 bg-white border border-emerald-300 rounded-xl text-sm font-bold text-emerald-800 focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                        <p class="text-[11px] text-emerald-700 mt-1">Automatically subtracts from accrued interest to show remaining interest balance.</p>
+                    </div>
+
+                    <div class="space-y-2.5 pt-2">
+                        <button type="button" onclick="calculateLoan(false)" 
+                            class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl shadow-md shadow-indigo-500/20 transition text-sm">
+                            🧮 Calculate Interest Breakdown
+                        </button>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                            <button type="button" onclick="saveAndResetOnCalculator()" 
+                                class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 px-3 rounded-xl shadow-sm transition text-xs sm:text-sm flex items-center justify-center gap-1.5">
+                                <span>➕</span> Direct Add / Safe & New
+                            </button>
+                            <button type="button" onclick="saveCurrentLoanToDashboard(true)" 
+                                class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 px-3 rounded-xl shadow-sm transition text-xs sm:text-sm flex items-center justify-center gap-1.5">
+                                <span>💾</span> Save & View Dashboard
+                            </button>
+                        </div>
+
+                        <button type="button" id="deleteCurrentLoanBtn" onclick="deleteCurrentEditingLoan()" 
+                            class="hidden w-full bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 font-bold py-2.5 rounded-xl transition text-xs flex items-center justify-center gap-1.5">
+                            <span>🗑️</span> Delete This Borrower Record
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Right Column: Results & Schedule -->
+                <div class="lg:col-span-7 space-y-6">
+                    <div id="results" class="glass-card rounded-3xl p-6 sm:p-7 shadow-lg border border-slate-200/90 space-y-5">
+                        <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 pb-4">
+                            <div>
+                                <span class="inline-flex items-center gap-1 text-[11px] font-extrabold uppercase tracking-wider bg-indigo-50 text-indigo-700 px-2.5 py-0.5 rounded-full">
+                                    Auto-Calculated Statement
+                                </span>
+                                <h3 id="resBorrowerTitle" class="text-lg sm:text-xl font-black text-slate-900 mt-1">Calculation Summary</h3>
+                            </div>
+                            <div class="flex flex-wrap items-center gap-2">
+                                <button type="button" onclick="downloadSingleBorrowerPDF()" 
+                                    class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold shadow-sm transition">
+                                    <span>📄</span> Download Borrower PDF
+                                </button>
+                                <button type="button" onclick="downloadAllLoansPDF()" 
+                                    class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold shadow-sm transition">
+                                    <span>📚</span> All Borrowers PDF
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 sm:grid-cols-3 gap-3.5">
+                            <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200">
+                                <span class="block text-[11px] font-bold text-slate-500 uppercase">Completed Duration</span>
+                                <span id="resDuration" class="text-sm sm:text-base font-extrabold text-slate-900 mt-1 block">-</span>
+                            </div>
+                            <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200">
+                                <span class="block text-[11px] font-bold text-slate-500 uppercase">₹100 Units</span>
+                                <span id="resUnits" class="text-sm sm:text-base font-extrabold text-slate-900 mt-1 block">-</span>
+                            </div>
+                            <div class="bg-purple-50/70 p-3.5 rounded-2xl border border-purple-200">
+                                <span class="block text-[11px] font-bold text-purple-700 uppercase">Gross Accrued Interest</span>
+                                <span id="resGrossInterest" class="text-sm sm:text-base font-extrabold text-purple-700 mt-1 block">₹0.00</span>
+                            </div>
+                            <div class="bg-emerald-50/70 p-3.5 rounded-2xl border border-emerald-200">
+                                <span class="block text-[11px] font-bold text-emerald-700 uppercase">Less: Interest Paid</span>
+                                <span id="resInterestPaid" class="text-sm sm:text-base font-extrabold text-emerald-700 mt-1 block">₹0.00</span>
+                            </div>
+                            <div class="bg-amber-50/80 p-3.5 rounded-2xl border border-amber-200">
+                                <span class="block text-[11px] font-bold text-amber-800 uppercase">Remaining Interest Due</span>
+                                <span id="resInterest" class="text-base sm:text-lg font-black text-amber-700 mt-1 block">₹0.00</span>
+                            </div>
+                            <div class="bg-indigo-950 text-white p-3.5 rounded-2xl shadow-md">
+                                <span class="block text-[11px] font-bold text-indigo-300 uppercase">Total Payable Balance</span>
+                                <span id="resTotal" class="text-base sm:text-lg font-black text-emerald-400 mt-1 block">₹0.00</span>
+                            </div>
+                        </div>
+
+                        <div id="smartAuditNote" class="bg-indigo-50/70 border border-indigo-100 rounded-2xl p-4 text-xs font-medium text-indigo-950 leading-relaxed">
+                            Enter principal and dates on the left to generate a complete month-by-month interest rollover schedule.
+                        </div>
+
+                        <div class="space-y-2.5">
+                            <div class="flex items-center justify-between">
+                                <h4 class="text-xs font-extrabold uppercase tracking-wider text-slate-600">
+                                    📅 Month-by-Month Interest Increment Ledger
+                                </h4>
+                                <span id="scheduleCountBadge" class="text-[11px] font-bold text-slate-500">0 Completed Months</span>
+                            </div>
+                            <div id="monthlyScheduleContainer" class="overflow-x-auto custom-scrollbar border border-slate-200 rounded-2xl max-h-96">
+                                <p class="text-xs text-slate-400 italic p-6 text-center">No completed months calculated yet.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Firebase Configuration Modal -->
+    <div id="firebaseConfigModal" class="hidden fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="glass-card rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl border border-indigo-500/30 space-y-5">
+            <div class="flex items-center justify-between border-b border-slate-200 pb-3">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-xl bg-indigo-600 text-white flex items-center justify-center font-bold text-sm">🔥</div>
+                    <h3 class="text-lg font-black text-slate-900">Firebase Cloud Database Setup</h3>
+                </div>
+                <button onclick="closeFirebaseConfigModal()" class="text-slate-400 hover:text-slate-700 font-bold">✕</button>
+            </div>
+            <p class="text-xs text-slate-600 leading-relaxed">
+                Configure your Firebase project credentials below. Your app is pre-configured for <strong>smart-interest-e05b0</strong>.
+            </p>
+            <div>
+                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Firebase Config JSON Object</label>
+                <textarea id="firebaseConfigJsonInput" rows="7" class="w-full p-3 bg-slate-50 border border-slate-300 rounded-xl text-xs font-mono focus:ring-2 focus:ring-indigo-500 focus:outline-none"></textarea>
+            </div>
+            <div class="flex items-center gap-2 pt-2">
+                <button onclick="saveFirebaseConfig()" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold py-3 rounded-xl shadow-md transition">
+                    Save & Connect Firebase
+                </button>
+                <button onclick="closeFirebaseConfigModal()" class="px-4 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="pdfRenderRoot"></div>
+
+    <!-- Firebase SDK Imports -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        let savedLoansCache = [];
+        let currentEditingLoanId = null;
+        let db = null;
+        let auth = null;
+        let unsubscribeLoans = null;
+
+        // Pre-configured for project smart-interest-e05b0
+        const defaultFirebaseConfig = {
+            apiKey: "AIzaSyD-smart-interest-e05b0-demoKey",
+            authDomain: "smart-interest-e05b0.firebaseapp.com",
+            projectId: "smart-interest-e05b0",
+            storageBucket: "smart-interest-e05b0.appspot.com",
+            messagingSenderId: "123456789012",
+            appId: "1:123456789012:web:abcdef123456789"
+        };
+
+        function getStoredFirebaseConfig() {
+            try {
+                const stored = localStorage.getItem('kande_firebase_config');
+                if (stored) return JSON.parse(stored);
+            } catch (e) {}
+            return typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : defaultFirebaseConfig;
+        }
+
+        async function initFirebase() {
+            try {
+                const config = getStoredFirebaseConfig();
+                document.getElementById('firebaseConfigJsonInput').value = JSON.stringify(config, null, 2);
+
+                const app = initializeApp(config);
+                db = getFirestore(app);
+                auth = getAuth(app);
+
+                const token = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+                if (token) {
+                    await signInWithCustomToken(auth, token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+
+                const appId = typeof __app_id !== 'undefined' ? __app_id : 'smart-interest-e05b0';
+                const loansRef = collection(db, 'artifacts', appId, 'public', 'data', 'loans');
+
+                if (unsubscribeLoans) unsubscribeLoans();
+
+                unsubscribeLoans = onSnapshot(loansRef, (snapshot) => {
+                    const loaded = [];
+                    snapshot.forEach(docSnap => {
+                        loaded.push({ id: docSnap.id, ...docSnap.data() });
+                    });
+                    savedLoansCache = loaded;
+                    updateDashboardMetrics();
+                    document.getElementById('syncStatusBadge').innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Firebase Synced (smart-interest-e05b0)';
+                }, (error) => {
+                    console.warn("Firestore listener error, fallback to local storage:", error);
+                    loadLocalFallback();
+                });
+
+            } catch (err) {
+                console.warn("Firebase initialization warning:", err);
+                document.getElementById('syncStatusBadge').innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span> Local Storage Mode';
+                loadLocalFallback();
+            }
+        }
+
+        function loadLocalFallback() {
+            try {
+                const local = localStorage.getItem('kande_local_loans_cache');
+                if (local) savedLoansCache = JSON.parse(local);
+            } catch (e) {}
+            updateDashboardMetrics();
+        }
+
+        async function persistLoanRecord(record) {
+            const appId = typeof __app_id !== 'undefined' ? __app_id : 'smart-interest-e05b0';
+            
+            const existingIdx = savedLoansCache.findIndex(l => l.id === record.id);
+            if (existingIdx >= 0) savedLoansCache[existingIdx] = record;
+            else savedLoansCache.unshift(record);
+
+            localStorage.setItem('kande_local_loans_cache', JSON.stringify(savedLoansCache));
+            updateDashboardMetrics();
+
+            try {
+                if (db && auth) {
+                    const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'loans', record.id);
+                    await setDoc(docRef, record);
+                }
+            } catch (err) {
+                console.warn("Cloud sync save queue error:", err);
+            }
+        }
+
+        async function removeLoanRecord(loanId) {
+            const appId = typeof __app_id !== 'undefined' ? __app_id : 'smart-interest-e05b0';
+
+            savedLoansCache = savedLoansCache.filter(l => l.id !== loanId);
+            if (currentEditingLoanId === loanId) resetFormForNewEntry();
+            document.getElementById('borrowerFullDetailCard')?.classList.add('hidden');
+
+            localStorage.setItem('kande_local_loans_cache', JSON.stringify(savedLoansCache));
+            updateDashboardMetrics();
+
+            try {
+                if (db && auth) {
+                    const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'loans', loanId);
+                    await deleteDoc(docRef);
+                }
+            } catch (err) {
+                console.warn("Cloud sync delete error:", err);
+            }
+        }
+
+        // Global Utility Functions exposed to window
+        window.formatINR = function(val) {
+            const num = Number(val) || 0;
+            return '₹' + num.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        };
+
+        window.getTodayISO = function() {
+            const now = new Date();
+            const tzOffset = now.getTimezoneOffset() * 60000;
+            return new Date(now.getTime() - tzOffset).toISOString().split('T')[0];
+        };
+
+        window.showError = function(msg) {
+            const box = document.getElementById('errorBox');
+            const text = document.getElementById('errorText');
+            if (box && text) {
+                text.innerText = msg;
+                box.classList.remove('hidden');
+            }
+        };
+
+        window.showToast = function(msg) {
+            const box = document.getElementById('toastBox');
+            const text = document.getElementById('toastText');
+            if (box && text) {
+                text.innerText = msg;
+                box.classList.remove('hidden');
+                setTimeout(() => box.classList.add('hidden'), 4000);
+            }
+        };
+
+        window.openFirebaseConfigModal = function() {
+            document.getElementById('firebaseConfigModal').classList.remove('hidden');
+        };
+
+        window.closeFirebaseConfigModal = function() {
+            document.getElementById('firebaseConfigModal').classList.add('hidden');
+        };
+
+        window.saveFirebaseConfig = async function() {
+            const jsonStr = document.getElementById('firebaseConfigJsonInput').value.trim();
+            try {
+                const parsed = JSON.parse(jsonStr);
+                localStorage.setItem('kande_firebase_config', JSON.stringify(parsed));
+                closeFirebaseConfigModal();
+                showToast("Firebase Config saved! Reconnecting database...");
+                await initFirebase();
+            } catch (e) {
+                showError("Invalid JSON configuration. Please check your Firebase config format.");
+            }
+        };
+
+        window.computeLoanMetrics = function(principalRaw, ratePer100Raw, fromDateStr, toDateStr, calcMode = 'simple', interestPaidRaw = 0) {
+            const principal = parseFloat(principalRaw);
+            const ratePer100 = parseFloat(ratePer100Raw) || 3;
+            const interestPaid = Math.max(0, parseFloat(interestPaidRaw) || 0);
+
+            if (isNaN(principal) || principal <= 0 || !fromDateStr || !toDateStr) return null;
+
+            const fromDate = new Date(fromDateStr + 'T00:00:00');
+            const toDate = new Date(toDateStr + 'T00:00:00');
+            if (toDate < fromDate) return null;
+
+            let years = toDate.getFullYear() - fromDate.getFullYear();
+            let months = toDate.getMonth() - fromDate.getMonth();
+            let days = toDate.getDate() - fromDate.getDate();
+
+            if (days < 0) {
+                months--;
+                const prevMonth = new Date(toDate.getFullYear(), toDate.getMonth(), 0);
+                days += prevMonth.getDate();
+            }
+            if (months < 0) {
+                years--;
+                months += 12;
+            }
+
+            const totalCompletedMonths = Math.max(0, (years * 12) + months);
+            const unitsOf100 = principal / 100;
+            const schedule = [];
+            let runningPrincipal = principal;
+            let cumulativeGrossInterest = 0;
+
+            for (let m = 1; m <= totalCompletedMonths; m++) {
+                const cycleStart = new Date(fromDate);
+                cycleStart.setMonth(cycleStart.getMonth() + (m - 1));
+                const cycleEnd = new Date(fromDate);
+                cycleEnd.setMonth(cycleEnd.getMonth() + m);
+
+                const openingBase = calcMode === 'compound' ? runningPrincipal : principal;
+                const monthInterest = (openingBase / 100) * ratePer100;
+                cumulativeGrossInterest += monthInterest;
+
+                if (calcMode === 'compound') runningPrincipal += monthInterest;
+                const closingTotal = principal + cumulativeGrossInterest;
+
+                schedule.push({
+                    monthNo: m,
+                    fromStr: cycleStart.toISOString().split('T')[0],
+                    toStr: cycleEnd.toISOString().split('T')[0],
+                    openingPrincipal: openingBase,
+                    monthInterest: monthInterest,
+                    cumulativeInterest: cumulativeGrossInterest,
+                    closingBalance: closingTotal
+                });
+            }
+
+            const grossInterest = cumulativeGrossInterest;
+            const netInterest = Math.max(0, grossInterest - interestPaid);
+            const totalPayable = principal + netInterest;
+            const nextRolloverDate = new Date(fromDate);
+            nextRolloverDate.setMonth(nextRolloverDate.getMonth() + totalCompletedMonths + 1);
+
+            return {
+                principal, ratePer100, fromDateStr, toDateStr, calcMode, years, months, days,
+                totalCompletedMonths, unitsOf100, grossInterest, interestPaid, netInterest, totalPayable,
+                nextRolloverDateStr: nextRolloverDate.toISOString().split('T')[0], schedule
+            };
+        };
+
+        window.switchTab = function(tabName) {
+            const dashSection = document.getElementById('pageDashboard');
+            const calcSection = document.getElementById('pageCalculator');
+            const dashBtn = document.getElementById('tabDashboardBtn');
+            const calcBtn = document.getElementById('tabCalculatorBtn');
+
+            if (tabName === 'dashboard') {
+                dashSection.classList.remove('hidden');
+                calcSection.classList.add('hidden');
+                dashBtn.className = "flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold transition bg-indigo-600 text-white shadow-md shadow-indigo-600/30";
+                calcBtn.className = "flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold transition bg-slate-800/90 text-slate-300 hover:bg-slate-700";
+                updateDashboardMetrics();
+            } else {
+                dashSection.classList.add('hidden');
+                calcSection.classList.remove('hidden');
+                calcBtn.className = "flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold transition bg-indigo-600 text-white shadow-md shadow-indigo-600/30";
+                dashBtn.className = "flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold transition bg-slate-800/90 text-slate-300 hover:bg-slate-700";
+                calculateLoan(true);
+            }
+        };
+
+        window.startNewLoanAndGoToCalc = function() {
+            resetFormForNewEntry();
+            switchTab('calculator');
+        };
+
+        window.resetFormForNewEntry = function() {
+            currentEditingLoanId = null;
+            document.getElementById('borrowerName').value = '';
+            document.getElementById('principal').value = '';
+            document.getElementById('ratePer100').value = '3';
+            document.getElementById('interestPaidInput').value = '0';
+            document.getElementById('toDate').value = window.getTodayISO();
+
+            const threeMonthsAgo = new Date();
+            threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
+            document.getElementById('fromDate').value = threeMonthsAgo.toISOString().split('T')[0];
+
+            const badge = document.getElementById('editingModeBadge');
+            if (badge) {
+                badge.innerText = 'New Borrower Entry';
+                badge.className = 'text-[11px] font-extrabold uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200';
+            }
+            document.getElementById('deleteCurrentLoanBtn')?.classList.add('hidden');
+            calculateLoan(true);
+        };
+
+        window.toggleAutoSyncToday = function() {
+            if (document.getElementById('autoSyncToday').checked) {
+                document.getElementById('toDate').value = window.getTodayISO();
+                calculateLoan(true);
+            }
+        };
+
+        window.simulateNextCompletedMonth = function() {
+            const toDateEl = document.getElementById('toDate');
+            if (!toDateEl.value) toDateEl.value = window.getTodayISO();
+            const d = new Date(toDateEl.value + 'T00:00:00');
+            d.setMonth(d.getMonth() + 1);
+            toDateEl.value = d.toISOString().split('T')[0];
+            document.getElementById('autoSyncToday').checked = false;
+            calculateLoan(false);
+            showToast('Simulated +1 Completed Month rollover!');
+        };
+
+        window.clearAllPendingInterestInForm = function() {
+            const metrics = window.computeLoanMetrics(
+                document.getElementById('principal').value,
+                document.getElementById('ratePer100').value,
+                document.getElementById('fromDate').value,
+                document.getElementById('toDate').value,
+                document.querySelector('input[name="calcMode"]:checked')?.value || 'simple',
+                0
+            );
+            if (!metrics) { showError('Please enter valid Principal and Dates first.'); return; }
+            document.getElementById('interestPaidInput').value = metrics.grossInterest.toFixed(2);
+            calculateLoan(false);
+            showToast('Marked full accrued interest as Paid!');
+        };
+
+        window.renderScheduleTableHTML = function(schedule) {
+            if (!schedule || schedule.length === 0) return `<p class="text-xs text-slate-400 italic p-5 text-center">0 completed months so far.</p>`;
+            let rows = schedule.map(row => `
+                <tr class="hover:bg-indigo-50/40 transition">
+                    <td class="px-3.5 py-2.5 text-xs font-extrabold text-indigo-700">Month #${row.monthNo}</td>
+                    <td class="px-3.5 py-2.5 text-xs text-slate-600 font-medium">${row.fromStr} → ${row.toStr}</td>
+                    <td class="px-3.5 py-2.5 text-xs font-semibold text-slate-800 text-right">${window.formatINR(row.openingPrincipal)}</td>
+                    <td class="px-3.5 py-2.5 text-xs font-bold text-purple-700 text-right">+${window.formatINR(row.monthInterest)}</td>
+                    <td class="px-3.5 py-2.5 text-xs font-bold text-amber-700 text-right">${window.formatINR(row.cumulativeInterest)}</td>
+                    <td class="px-3.5 py-2.5 text-xs font-black text-emerald-700 text-right">${window.formatINR(row.closingBalance)}</td>
+                </tr>
+            `).join('');
+
+            return `
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-100 border-b border-slate-200 text-[11px] font-extrabold uppercase text-slate-600">
+                            <th class="px-3.5 py-2.5">Cycle</th>
+                            <th class="px-3.5 py-2.5">Completed Period</th>
+                            <th class="px-3.5 py-2.5 text-right">Principal Base</th>
+                            <th class="px-3.5 py-2.5 text-right">Monthly Interest</th>
+                            <th class="px-3.5 py-2.5 text-right">Cumulative Int.</th>
+                            <th class="px-3.5 py-2.5 text-right">Total Balance</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">${rows}</tbody>
+                </table>
+            `;
+        };
+
+        window.calculateLoan = function(silent = false) {
+            const borrowerName = document.getElementById('borrowerName').value.trim() || 'Unnamed Borrower';
+            const principalInput = document.getElementById('principal').value;
+            const ratePer100Input = document.getElementById('ratePer100').value || '3';
+            const fromDateInput = document.getElementById('fromDate').value;
+            let toDateInput = document.getElementById('toDate').value;
+            const interestPaidInput = document.getElementById('interestPaidInput').value || '0';
+            const calcMode = document.querySelector('input[name="calcMode"]:checked')?.value || 'simple';
+
+            if (document.getElementById('autoSyncToday')?.checked && silent) {
+                toDateInput = window.getTodayISO();
+                document.getElementById('toDate').value = toDateInput;
+            }
+
+            if (!principalInput || !fromDateInput || !toDateInput) {
+                if (!silent) showError('Please enter Principal Amount, From Date, and To Date.');
+                return null;
+            }
+
+            const metrics = window.computeLoanMetrics(principalInput, ratePer100Input, fromDateInput, toDateInput, calcMode, interestPaidInput);
+            if (!metrics) {
+                if (!silent) showError('To Date cannot be earlier than From Date.');
+                return null;
+            }
+
+            document.getElementById('errorBox').classList.add('hidden');
+            document.getElementById('resBorrowerTitle').innerText = `${borrowerName} — Statement`;
+            document.getElementById('resDuration').innerText = `${metrics.totalCompletedMonths} Months${metrics.days > 0 ? ` & ${metrics.days} Days` : ''} (${metrics.years}Y, ${metrics.months}M)`;
+            document.getElementById('resUnits').innerText = `${metrics.unitsOf100.toLocaleString('en-IN')} units`;
+            document.getElementById('resGrossInterest').innerText = window.formatINR(metrics.grossInterest);
+            document.getElementById('resInterestPaid').innerText = window.formatINR(metrics.interestPaid);
+            document.getElementById('resInterest').innerText = window.formatINR(metrics.netInterest);
+            document.getElementById('resTotal').innerText = window.formatINR(metrics.totalPayable);
+
+            document.getElementById('scheduleCountBadge').innerText = `${metrics.totalCompletedMonths} Completed Month(s)`;
+            document.getElementById('monthlyScheduleContainer').innerHTML = window.renderScheduleTableHTML(metrics.schedule);
+
+            const monthlyCharge = (metrics.principal / 100) * metrics.ratePer100;
+            document.getElementById('smartAuditNote').innerHTML = `
+                <strong>Smart Rollover Audit:</strong> At ₹${metrics.ratePer100} per ₹100/month, each completed month adds <strong>${window.formatINR(monthlyCharge)}</strong>. 
+                Next rollover date: <strong>${metrics.nextRolloverDateStr}</strong>.
+            `;
+
+            return { borrowerName, ...metrics };
+        };
+
+        window.handleBorrowerSearch = function(queryStr, containerId) {
+            const box = document.getElementById(containerId);
+            if (!box) return;
+
+            const q = (queryStr || '').trim().toLowerCase();
+            if (q.length < 1) { box.classList.add('hidden'); box.innerHTML = ''; return; }
+
+            const matches = savedLoansCache.filter(l => (l.borrowerName || '').toLowerCase().includes(q));
+            if (matches.length === 0) {
+                box.innerHTML = `<div class="p-3.5 text-xs text-slate-400 italic">No saved borrower matching "${queryStr}".</div>`;
+                box.classList.remove('hidden');
+                return;
+            }
+
+            const todayISO = window.getTodayISO();
+            box.innerHTML = matches.map(loan => {
+                const m = window.computeLoanMetrics(loan.principal, loan.ratePer100 || 3, loan.fromDateStr, todayISO, loan.calcMode || 'simple', loan.interestPaid || 0);
+                return `
+                    <div onclick="selectBorrowerFromSearch('${loan.id}', '${containerId}')" 
+                        class="p-3.5 hover:bg-indigo-50/80 cursor-pointer transition flex items-center justify-between gap-3">
+                        <div>
+                            <div class="text-sm font-extrabold text-slate-900">${loan.borrowerName}</div>
+                            <div class="text-[11px] text-slate-500">Principal: <strong>${window.formatINR(loan.principal)}</strong></div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-xs font-extrabold text-amber-700">Due: ${window.formatINR(m ? m.netInterest : 0)}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            box.classList.remove('hidden');
+        };
+
+        window.selectBorrowerFromSearch = function(loanId, containerId) {
+            document.getElementById(containerId)?.classList.add('hidden');
+            const loan = savedLoansCache.find(l => l.id === loanId);
+            if (!loan) return;
+            if (containerId === 'dashboardSuggestBox') {
+                document.getElementById('dashboardSearchInput').value = loan.borrowerName;
+                openBorrowerFullDetailOnDashboard(loanId);
+            } else {
+                loadLoanIntoCalculator(loanId, false);
+            }
+        };
+
+        window.clearDashboardSearch = function() {
+            document.getElementById('dashboardSearchInput').value = '';
+            document.getElementById('dashboardSuggestBox')?.classList.add('hidden');
+        };
+
+        window.openBorrowerFullDetailOnDashboard = function(loanId) {
+            const loan = savedLoansCache.find(l => l.id === loanId);
+            if (!loan) return;
+
+            const todayISO = window.getTodayISO();
+            const m = window.computeLoanMetrics(loan.principal, loan.ratePer100 || 3, loan.fromDateStr, todayISO, loan.calcMode || 'simple', loan.interestPaid || 0);
+            if (!m) return;
+
+            const card = document.getElementById('borrowerFullDetailCard');
+            document.getElementById('detailBorrowerName').innerText = loan.borrowerName;
+            document.getElementById('detailBorrowerDates').innerText = `Disbursed: ${loan.fromDateStr} • Rate: ₹${m.ratePer100}/₹100/Mo`;
+
+            document.getElementById('detailSummaryGrid').innerHTML = `
+                <div class="bg-slate-50 p-3 rounded-xl border border-slate-200"><span class="block text-[10px] font-bold uppercase text-slate-500">Principal</span><span class="text-sm font-black text-slate-900">${window.formatINR(m.principal)}</span></div>
+                <div class="bg-slate-50 p-3 rounded-xl border border-slate-200"><span class="block text-[10px] font-bold uppercase text-slate-500">Months</span><span class="text-sm font-black text-indigo-700">${m.totalCompletedMonths} Mo</span></div>
+                <div class="bg-purple-50 p-3 rounded-xl border border-purple-200"><span class="block text-[10px] font-bold uppercase text-purple-700">Gross Int</span><span class="text-sm font-black text-purple-700">${window.formatINR(m.grossInterest)}</span></div>
+                <div class="bg-emerald-50 p-3 rounded-xl border border-emerald-200"><span class="block text-[10px] font-bold uppercase text-emerald-700">Paid</span><span class="text-sm font-black text-emerald-700">${window.formatINR(m.interestPaid)}</span></div>
+                <div class="bg-amber-50 p-3 rounded-xl border border-amber-200"><span class="block text-[10px] font-bold uppercase text-amber-800">Pending</span><span class="text-sm font-black text-amber-700">${window.formatINR(m.netInterest)}</span></div>
+                <div class="bg-slate-900 text-white p-3 rounded-xl"><span class="block text-[10px] font-bold uppercase text-indigo-300">Total</span><span class="text-sm font-black text-emerald-400">${window.formatINR(m.totalPayable)}</span></div>
+            `;
+            document.getElementById('detailScheduleContainer').innerHTML = window.renderScheduleTableHTML(m.schedule);
+            document.getElementById('detailEditBtn').onclick = () => loadLoanIntoCalculator(loan.id, true);
+            document.getElementById('detailPdfBtn').onclick = () => exportSpecificBorrowerPDF(loan.id);
+
+            card.classList.remove('hidden');
+            card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        };
+
+        async function saveLoanRecord(redirectToDashboard = false) {
+            const calcData = window.calculateLoan(false);
+            if (!calcData) return;
+
+            const loanId = currentEditingLoanId || ('loan_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7));
+            const record = {
+                id: loanId, borrowerName: calcData.borrowerName, principal: calcData.principal,
+                ratePer100: calcData.ratePer100, fromDateStr: calcData.fromDateStr, toDateStr: calcData.toDateStr,
+                calcMode: calcData.calcMode, interestPaid: calcData.interestPaid, updatedAt: new Date().toISOString()
+            };
+
+            await persistLoanRecord(record);
+            showToast(`Saved "${record.borrowerName}" successfully!`);
+
+            window.resetFormForNewEntry();
+            if (redirectToDashboard) window.switchTab('dashboard');
+        }
+
+        window.saveAndResetOnCalculator = async function() {
+            await saveLoanRecord(false);
+        };
+
+        window.saveCurrentLoanToDashboard = async function(redirectToDashboard = true) {
+            await saveLoanRecord(redirectToDashboard);
+        };
+
+        window.loadLoanIntoCalculator = function(loanId, switchPage = true) {
+            const loan = savedLoansCache.find(l => l.id === loanId);
+            if (!loan) return;
+
+            currentEditingLoanId = loan.id;
+            document.getElementById('borrowerName').value = loan.borrowerName || '';
+            document.getElementById('principal').value = loan.principal || '';
+            document.getElementById('ratePer100').value = loan.ratePer100 || 3;
+            document.getElementById('fromDate').value = loan.fromDateStr || window.getTodayISO();
+            document.getElementById('toDate').value = window.getTodayISO();
+            document.getElementById('interestPaidInput').value = loan.interestPaid || 0;
+
+            const modeRadio = document.querySelector(`input[name="calcMode"][value="${loan.calcMode || 'simple'}"]`);
+            if (modeRadio) modeRadio.checked = true;
+
+            const badge = document.getElementById('editingModeBadge');
+            if (badge) {
+                badge.innerText = `Editing: ${loan.borrowerName}`;
+                badge.className = 'text-[11px] font-extrabold uppercase tracking-wider text-indigo-700 bg-indigo-50 px-2.5 py-0.5 rounded-full border border-indigo-200';
+            }
+            document.getElementById('deleteCurrentLoanBtn')?.classList.remove('hidden');
+
+            if (switchPage) window.switchTab('calculator');
+            else window.calculateLoan(false);
+            showToast(`Loaded ${loan.borrowerName}`);
+        };
+
+        window.markLoanInterestPaidClear = async function(loanId) {
+            const loan = savedLoansCache.find(l => l.id === loanId);
+            if (!loan) return;
+
+            const m = window.computeLoanMetrics(loan.principal, loan.ratePer100 || 3, loan.fromDateStr, window.getTodayISO(), loan.calcMode || 'simple', 0);
+            if (!m) return;
+
+            loan.interestPaid = m.grossInterest;
+            loan.updatedAt = new Date().toISOString();
+            await persistLoanRecord(loan);
+            showToast(`Cleared interest for ${loan.borrowerName} (${window.formatINR(m.grossInterest)} paid)!`);
+        };
+
+        window.deleteLoanRecord = async function(loanId) {
+            await removeLoanRecord(loanId);
+            showToast(`Deleted record.`);
+        };
+
+        window.deleteCurrentEditingLoan = async function() {
+            if (currentEditingLoanId) await window.deleteLoanRecord(currentEditingLoanId);
+        };
+
+        function updateDashboardMetrics() {
+            let totalPrincipal = 0, totalGrossInterest = 0, totalInterestCollected = 0, totalNetInterest = 0;
+            const todayISO = window.getTodayISO();
+
+            savedLoansCache.forEach(loan => {
+                const m = window.computeLoanMetrics(loan.principal, loan.ratePer100 || 3, loan.fromDateStr, todayISO, loan.calcMode || 'simple', loan.interestPaid || 0);
+                if (m) {
+                    totalPrincipal += m.principal;
+                    totalGrossInterest += m.grossInterest;
+                    totalInterestCollected += m.interestPaid;
+                    totalNetInterest += m.netInterest;
+                }
+            });
+
+            if (document.getElementById('dashTotalPrincipal')) document.getElementById('dashTotalPrincipal').innerText = window.formatINR(totalPrincipal);
+            if (document.getElementById('dashTotalGrossInterest')) document.getElementById('dashTotalGrossInterest').innerText = window.formatINR(totalGrossInterest);
+            if (document.getElementById('dashTotalInterestCollected')) document.getElementById('dashTotalInterestCollected').innerText = window.formatINR(totalInterestCollected);
+            if (document.getElementById('dashTotalInterest')) document.getElementById('dashTotalInterest').innerText = window.formatINR(totalNetInterest);
+            if (document.getElementById('dashTotalAccounts')) document.getElementById('dashTotalAccounts').innerText = savedLoansCache.length;
+
+            renderSavedLoansTable();
+        }
+
+        function renderSavedLoansTable() {
+            const container = document.getElementById('savedLoansContainer');
+            if (!container) return;
+
+            if (savedLoansCache.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-12 px-4">
+                        <p class="text-sm text-slate-500 font-semibold">No borrower accounts in Firebase database yet.</p>
+                        <button onclick="startNewLoanAndGoToCalc()" class="mt-3 inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-indigo-600 text-white text-xs font-bold shadow-sm">
+                            ➕ Add Your First Borrower
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+
+            const todayISO = window.getTodayISO();
+            const rowsHTML = savedLoansCache.map(loan => {
+                const m = window.computeLoanMetrics(loan.principal, loan.ratePer100 || 3, loan.fromDateStr, todayISO, loan.calcMode || 'simple', loan.interestPaid || 0);
+                if (!m) return '';
+
+                return `
+                    <tr class="hover:bg-slate-50/90 transition border-b border-slate-100">
+                        <td class="px-4 py-3.5">
+                            <button onclick="openBorrowerFullDetailOnDashboard('${loan.id}')" class="text-left group">
+                                <div class="text-sm font-extrabold text-indigo-950 group-hover:text-indigo-600 underline decoration-dotted">${loan.borrowerName}</div>
+                                <div class="text-[11px] text-slate-400">From: ${loan.fromDateStr}</div>
+                            </button>
+                        </td>
+                        <td class="px-4 py-3.5 text-xs font-bold text-slate-800 text-right">${window.formatINR(m.principal)}</td>
+                        <td class="px-4 py-3.5 text-center">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-extrabold bg-indigo-50 text-indigo-700 border border-indigo-200">
+                                ${m.totalCompletedMonths} Mo
+                            </span>
+                        </td>
+                        <td class="px-4 py-3.5 text-xs font-bold text-purple-700 text-right">${window.formatINR(m.grossInterest)}</td>
+                        <td class="px-4 py-3.5 text-xs font-bold text-emerald-700 text-right">${window.formatINR(m.interestPaid)}</td>
+                        <td class="px-4 py-3.5 text-xs font-extrabold text-amber-700 text-right">${window.formatINR(m.netInterest)}</td>
+                        <td class="px-4 py-3.5 text-sm font-black text-slate-900 text-right">${window.formatINR(m.totalPayable)}</td>
+                        <td class="px-4 py-3.5 text-right">
+                            <div class="inline-flex items-center justify-end gap-1.5 flex-wrap">
+                                <button onclick="markLoanInterestPaidClear('${loan.id}')" class="px-2.5 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-[11px] font-bold">✓ Paid</button>
+                                <button onclick="loadLoanIntoCalculator('${loan.id}', true)" class="px-2.5 py-1.5 rounded-lg bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-[11px] font-bold">Edit</button>
+                                <button onclick="exportSpecificBorrowerPDF('${loan.id}')" class="px-2.5 py-1.5 rounded-lg bg-slate-900 text-white text-[11px] font-bold">PDF</button>
+                                <button onclick="deleteLoanRecord('${loan.id}')" class="px-2.5 py-1.5 rounded-lg bg-rose-50 text-rose-600 text-[11px] font-bold">🗑️</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+
+            container.innerHTML = `
+                <table class="w-full text-left border-collapse min-w-[820px]">
+                    <thead>
+                        <tr class="bg-slate-100/90 border-y border-slate-200 text-[11px] font-extrabold uppercase text-slate-600">
+                            <th class="px-4 py-3">Borrower Name</th>
+                            <th class="px-4 py-3 text-right">Principal</th>
+                            <th class="px-4 py-3 text-center">Months</th>
+                            <th class="px-4 py-3 text-right">Gross Int</th>
+                            <th class="px-4 py-3 text-right">Paid</th>
+                            <th class="px-4 py-3 text-right">Pending</th>
+                            <th class="px-4 py-3 text-right">Total Payable</th>
+                            <th class="px-4 py-3 text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>${rowsHTML}</tbody>
+                </table>
+            `;
+        }
+
+        function buildBorrowerStatementBlockHTML(borrowerName, m, indexNumber = null) {
+            const rowsHTML = (m.schedule || []).map(r => `
+                <tr style="border-bottom: 1px solid #e2e8f0;">
+                    <td style="padding: 6px 8px; font-size: 11px; font-weight: 700; color: #312e81;">Month #${r.monthNo}</td>
+                    <td style="padding: 6px 8px; font-size: 11px; color: #475569;">${r.fromStr} to ${r.toStr}</td>
+                    <td style="padding: 6px 8px; font-size: 11px; text-align: right; font-weight: 600;">${window.formatINR(r.openingPrincipal)}</td>
+                    <td style="padding: 6px 8px; font-size: 11px; text-align: right; font-weight: 700; color: #6d28d9;">+${window.formatINR(r.monthInterest)}</td>
+                    <td style="padding: 6px 8px; font-size: 11px; text-align: right; font-weight: 700; color: #b45309;">${window.formatINR(r.cumulativeInterest)}</td>
+                    <td style="padding: 6px 8px; font-size: 11px; text-align: right; font-weight: 800; color: #047857;">${window.formatINR(r.closingBalance)}</td>
+                </tr>
+            `).join('');
+
+            const scheduleTable = m.schedule && m.schedule.length > 0 ? `
+                <table style="width: 100%; border-collapse: collapse; margin-top: 10px; border: 1px solid #cbd5e1;">
+                    <thead>
+                        <tr style="background: #f1f5f9; border-bottom: 1px solid #cbd5e1; font-size: 10px; text-transform: uppercase; color: #334155;">
+                            <th style="padding: 6px 8px; text-align: left;">Month</th>
+                            <th style="padding: 6px 8px; text-align: left;">Cycle Period</th>
+                            <th style="padding: 6px 8px; text-align: right;">Principal Base</th>
+                            <th style="padding: 6px 8px; text-align: right;">Monthly Int.</th>
+                            <th style="padding: 6px 8px; text-align: right;">Cumulative Int.</th>
+                            <th style="padding: 6px 8px; text-align: right;">Closing Balance</th>
+                        </tr>
+                    </thead>
+                    <tbody>${rowsHTML}</tbody>
+                </table>
+            ` : `<p style="font-size: 11px; color: #64748b; font-style: italic; margin-top: 8px;">0 completed months.</p>`;
+
+            return `
+                <div class="pdf-page-break" style="border: 1px solid #cbd5e1; border-radius: 12px; padding: 16px; margin-bottom: 20px; background: #ffffff;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; margin-bottom: 10px;">
+                        <div>
+                            <div style="font-size: 16px; font-weight: 900; color: #0f172a;">${indexNumber !== null ? `#${indexNumber}. ` : ''}${borrowerName}</div>
+                            <div style="font-size: 11px; color: #64748b;">Disbursed: <strong>${m.fromDateStr}</strong> | Calculated Up To: <strong>${m.toDateStr}</strong></div>
+                        </div>
+                        <div style="text-align: right;">
+                            <div style="font-size: 11px; font-weight: 700; color: #4f46e5;">Completed: ${m.totalCompletedMonths} Months</div>
+                            <div style="font-size: 14px; font-weight: 900; color: #047857;">Net Payable: ${window.formatINR(m.totalPayable)}</div>
+                        </div>
+                    </div>
+                    <table style="width: 100%; border-collapse: collapse; margin-bottom: 10px; background: #f8fafc; border-radius: 8px;">
+                        <tr>
+                            <td style="padding: 8px; font-size: 11px;"><strong>Principal:</strong> ${window.formatINR(m.principal)}</td>
+                            <td style="padding: 8px; font-size: 11px;"><strong>Gross:</strong> ${window.formatINR(m.grossInterest)}</td>
+                            <td style="padding: 8px; font-size: 11px; color: #047857;"><strong>Paid:</strong> ${window.formatINR(m.interestPaid)}</td>
+                            <td style="padding: 8px; font-size: 11px; color: #b45309;"><strong>Pending:</strong> ${window.formatINR(m.netInterest)}</td>
+                        </tr>
+                    </table>
+                    <div style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: #334155; margin-top: 6px;">Month-by-Month Interest Ledger</div>
+                    ${scheduleTable}
+                </div>
+            `;
+        }
+
+        async function triggerHtml2PdfDownload(htmlContent, filename) {
+            const root = document.getElementById('pdfRenderRoot');
+            root.innerHTML = htmlContent;
+            root.style.position = 'static';
+            root.style.width = '780px';
+
+            const opt = {
+                margin: [8, 8, 8, 8],
+                filename: filename,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, useCORS: true },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
+            try {
+                await html2pdf().set(opt).from(root).save();
+                showToast(`Downloaded ${filename}!`);
+            } catch (err) {
+                console.error(err);
+                showError("PDF generation error.");
+            } finally {
+                root.style.position = 'fixed';
+                root.style.left = '-9999px';
+                root.innerHTML = '';
+            }
+        }
+
+        window.downloadSingleBorrowerPDF = async function() {
+            const calcData = window.calculateLoan(false);
+            if (!calcData) return;
+            const html = `
+                <div style="padding: 16px; font-family: 'Inter', sans-serif; color: #0f172a;">
+                    <div style="background: #1e1b4b; color: #ffffff; padding: 16px 20px; border-radius: 12px; margin-bottom: 18px;">
+                        <div style="font-size: 18px; font-weight: 900;">Kande Smart Interest System Pvt. Ltd.</div>
+                        <div style="font-size: 11px; color: #a5b4fc;">Borrower Statement & Month-by-Month Interest Ledger</div>
+                    </div>
+                    ${buildBorrowerStatementBlockHTML(calcData.borrowerName, calcData)}
+                </div>
+            `;
+            await triggerHtml2PdfDownload(html, `Kande_Statement_${calcData.borrowerName.replace(/[^a-z0-9]/gi, '_')}.pdf`);
+        };
+
+        window.exportSpecificBorrowerPDF = async function(loanId) {
+            const loan = savedLoansCache.find(l => l.id === loanId);
+            if (!loan) return;
+            const m = window.computeLoanMetrics(loan.principal, loan.ratePer100 || 3, loan.fromDateStr, window.getTodayISO(), loan.calcMode || 'simple', loan.interestPaid || 0);
+            if (!m) return;
+            const html = `
+                <div style="padding: 16px; font-family: 'Inter', sans-serif; color: #0f172a;">
+                    <div style="background: #1e1b4b; color: #ffffff; padding: 16px 20px; border-radius: 12px; margin-bottom: 18px;">
+                        <div style="font-size: 18px; font-weight: 900;">Kande Smart Interest System Pvt. Ltd.</div>
+                        <div style="font-size: 11px; color: #a5b4fc;">Official Borrower Statement</div>
+                    </div>
+                    ${buildBorrowerStatementBlockHTML(loan.borrowerName, m)}
+                </div>
+            `;
+            await triggerHtml2PdfDownload(html, `Kande_Statement_${loan.borrowerName.replace(/[^a-z0-9]/gi, '_')}.pdf`);
+        };
+
+        window.downloadAllLoansPDF = async function() {
+            if (savedLoansCache.length === 0) { showError("No saved borrowers to export."); return; }
+            const todayISO = window.getTodayISO();
+            let gp = 0, ggi = 0, gpi = 0, gni = 0, gtp = 0;
+
+            const blocks = savedLoansCache.map((loan, idx) => {
+                const m = window.computeLoanMetrics(loan.principal, loan.ratePer100 || 3, loan.fromDateStr, todayISO, loan.calcMode || 'simple', loan.interestPaid || 0);
+                if (!m) return '';
+                gp += m.principal; ggi += m.grossInterest; gpi += m.interestPaid; gni += m.netInterest; gtp += m.totalPayable;
+                return buildBorrowerStatementBlockHTML(loan.borrowerName, m, idx + 1);
+            }).join('');
+
+            const html = `
+                <div style="padding: 16px; font-family: 'Inter', sans-serif; color: #0f172a;">
+                    <div style="background: #1e1b4b; color: #ffffff; padding: 18px 20px; border-radius: 12px; margin-bottom: 16px;">
+                        <div style="font-size: 20px; font-weight: 900;">Kande Smart Interest System Pvt. Ltd.</div>
+                        <div style="font-size: 12px; color: #a5b4fc;">Master Portfolio & Month-by-Month Interest Ledger Report</div>
+                        <div style="display: flex; justify-content: space-between; margin-top: 14px; padding-top: 12px; border-top: 1px solid #312e81; font-size: 11px;">
+                            <div>Principal: <strong>${window.formatINR(gp)}</strong></div>
+                            <div>Collected: <strong style="color: #34d399;">${window.formatINR(gpi)}</strong></div>
+                            <div>Pending: <strong style="color: #fbbf24;">${window.formatINR(gni)}</strong></div>
+                            <div>Total: <strong style="color: #38bdf8;">${window.formatINR(gtp)}</strong></div>
+                        </div>
+                    </div>
+                    ${blocks}
+                </div>
+            `;
+            await triggerHtml2PdfDownload(html, `Kande_Master_Ledger_${todayISO}.pdf`);
+        };
+
+        document.addEventListener('click', (e) => {
+            if (!document.getElementById('dashboardSuggestBox')?.contains(e.target) && e.target !== document.getElementById('dashboardSearchInput')) {
+                document.getElementById('dashboardSuggestBox')?.classList.add('hidden');
+            }
+            if (!document.getElementById('calcSuggestBox')?.contains(e.target) && e.target !== document.getElementById('borrowerName')) {
+                document.getElementById('calcSuggestBox')?.classList.add('hidden');
+            }
+        });
+
+        window.addEventListener('DOMContentLoaded', async () => {
+            await initFirebase();
+            window.resetFormForNewEntry();
+        });
+    </script>
+</body>
+</html>
